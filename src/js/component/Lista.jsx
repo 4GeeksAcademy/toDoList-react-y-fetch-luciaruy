@@ -1,8 +1,37 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const List = () => {
     const [tarea, setTarea] = useState("");
     const [lista, setLista] = useState([]);
+    const [usuario, setUsuario] = useState([])
+
+    
+    function crearUsuario() {
+        fetch('https://playground.4geeks.com/todo/users/LuciaRuy', {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+        .then((response) => response.json())
+        .then((data) => console.log(data))
+        .catch((error) => console.log(error));
+    }
+    
+    function obtenerTareas() {
+        fetch('https://playground.4geeks.com/todo/users/LuciaRuy', {
+            method: 'GET',
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+        .then((response) => response.json())
+        .then((data) => setLista(data.todos))
+        .catch((error) => console.log(error))
+    }
+
+
+
 
     function handleTarea(event) {
         setTarea(event.target.value);
@@ -21,6 +50,11 @@ const List = () => {
         setLista(nuevasTareas);
     }
 
+    useEffect(() =>{
+        crearUsuario()
+        obtenerTareas()
+    },[])
+
     return (
         <div className="card">
             <div className="card-body">
@@ -33,7 +67,7 @@ const List = () => {
                                 className="list-group-item d-flex justify-content-between align-items-center"
                                 onMouseEnter={(e) => e.currentTarget.querySelector('button').style.display = 'inline'}
                             >
-                                {tarea}
+                                {tarea.label}
                                 <button className="btn btn-danger btn-sm" onClick={() => eliminarTarea(index)}> Eliminar</button>
                                 </li>
                         ))
